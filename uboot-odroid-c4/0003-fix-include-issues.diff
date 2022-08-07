@@ -1,0 +1,155 @@
+diff -u -ru include/image.h include/image.h
+--- include/image.h	2022-04-14 07:21:50.000000000 +0200
++++ include/image.h	2022-08-07 22:14:07.420871134 +0200
+@@ -46,7 +46,7 @@
+ 
+ #if defined(CONFIG_FIT)
+ #include <hash.h>
+-#include <libfdt.h>
++#include "libfdt.h"
+ #include <fdt_support.h>
+ # ifdef CONFIG_SPL_BUILD
+ #  ifdef CONFIG_SPL_CRC32_SUPPORT
+diff -u -ru include/libfdt.h include/libfdt.h
+--- include/libfdt.h	2022-04-14 07:21:50.000000000 +0200
++++ include/libfdt.h	2022-08-07 22:13:32.766991920 +0200
+@@ -51,8 +51,8 @@
+  *     EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+-#include <libfdt_env.h>
+-#include <fdt.h>
++#include "libfdt_env.h"
++#include "fdt.h"
+ 
+ #define FDT_FIRST_SUPPORTED_VERSION	0x10
+ #define FDT_LAST_SUPPORTED_VERSION	0x11
+diff -u -ru lib/fdtdec_common.c lib/fdtdec_common.c
+--- lib/fdtdec_common.c	2022-04-14 07:21:50.000000000 +0200
++++ lib/fdtdec_common.c	2022-08-07 22:16:12.276179563 +0200
+@@ -13,7 +13,7 @@
+ #include <libfdt.h>
+ #include <fdtdec.h>
+ #else
+-#include "libfdt.h"
++#include "../include/libfdt.h"
+ #include "fdt_support.h"
+ 
+ #define debug(...)
+diff -u -ru lib/libfdt/fdt_addresses.c lib/libfdt/fdt_addresses.c
+--- lib/libfdt/fdt_addresses.c	2022-04-14 07:21:50.000000000 +0200
++++ lib/libfdt/fdt_addresses.c	2022-08-07 22:18:41.608555896 +0200
+@@ -3,7 +3,7 @@
+  * Copyright (C) 2014 David Gibson <david@gibson.dropbear.id.au>
+  * SPDX-License-Identifier:	GPL-2.0+ BSD-2-Clause
+  */
+-#include "libfdt_env.h"
++#include "../include/libfdt_env.h"
+ 
+ #ifndef USE_HOSTCC
+ #include <fdt.h>
+diff -u -ru lib/libfdt/fdt.c lib/libfdt/fdt.c
+--- lib/libfdt/fdt.c	2022-04-14 07:21:50.000000000 +0200
++++ lib/libfdt/fdt.c	2022-08-07 22:16:51.536802991 +0200
+@@ -3,7 +3,7 @@
+  * Copyright (C) 2006 David Gibson, IBM Corporation.
+  * SPDX-License-Identifier:	GPL-2.0+ BSD-2-Clause
+  */
+-#include "libfdt_env.h"
++#include "../include/libfdt_env.h"
+ 
+ #ifndef USE_HOSTCC
+ #include <fdt.h>
+diff -u -ru lib/libfdt/fdt_empty_tree.c lib/libfdt/fdt_empty_tree.c
+--- lib/libfdt/fdt_empty_tree.c	2022-04-14 07:21:50.000000000 +0200
++++ lib/libfdt/fdt_empty_tree.c	2022-08-07 22:18:50.925371242 +0200
+@@ -3,7 +3,7 @@
+  * Copyright (C) 2012 David Gibson, IBM Corporation.
+  * SPDX-License-Identifier:	GPL-2.0+ BSD-2-Clause
+  */
+-#include "libfdt_env.h"
++#include "../include/libfdt_env.h"
+ 
+ #include <fdt.h>
+ #include <libfdt.h>
+diff -u -ru lib/libfdt/fdt_overlay.c lib/libfdt/fdt_overlay.c
+--- lib/libfdt/fdt_overlay.c	2022-04-14 07:21:50.000000000 +0200
++++ lib/libfdt/fdt_overlay.c	2022-08-07 22:20:10.676645642 +0200
+@@ -1,4 +1,4 @@
+-#include "libfdt_env.h"
++#include "../include/libfdt_env.h"
+ 
+ #include <fdt.h>
+ #include <libfdt.h>
+diff -u -ru lib/libfdt/fdt_ro.c lib/libfdt/fdt_ro.c
+--- lib/libfdt/fdt_ro.c	2022-04-14 07:21:50.000000000 +0200
++++ lib/libfdt/fdt_ro.c	2022-08-07 22:18:52.585397737 +0200
+@@ -3,7 +3,7 @@
+  * Copyright (C) 2006 David Gibson, IBM Corporation.
+  * SPDX-License-Identifier:	GPL-2.0+ BSD-2-Clause
+  */
+-#include "libfdt_env.h"
++#include "../include/libfdt_env.h"
+ 
+ #ifndef USE_HOSTCC
+ #include <fdt.h>
+diff -u -ru lib/libfdt/fdt_rw.c lib/libfdt/fdt_rw.c
+--- lib/libfdt/fdt_rw.c	2022-04-14 07:21:50.000000000 +0200
++++ lib/libfdt/fdt_rw.c	2022-08-07 22:18:36.225136673 +0200
+@@ -3,7 +3,7 @@
+  * Copyright (C) 2006 David Gibson, IBM Corporation.
+  * SPDX-License-Identifier:	GPL-2.0+ BSD-2-Clause
+  */
+-#include "libfdt_env.h"
++#include "../include/libfdt_env.h"
+ 
+ #ifndef USE_HOSTCC
+ #include <fdt.h>
+diff -u -ru lib/libfdt/fdt_strerror.c lib/libfdt/fdt_strerror.c
+--- lib/libfdt/fdt_strerror.c	2022-04-14 07:21:50.000000000 +0200
++++ lib/libfdt/fdt_strerror.c	2022-08-07 22:18:56.225455841 +0200
+@@ -3,7 +3,7 @@
+  * Copyright (C) 2006 David Gibson, IBM Corporation.
+  * SPDX-License-Identifier:	GPL-2.0+ BSD-2-Clause
+  */
+-#include "libfdt_env.h"
++#include "../include/libfdt_env.h"
+ 
+ #ifndef USE_HOSTCC
+ #include <fdt.h>
+diff -u -ru lib/libfdt/fdt_sw.c lib/libfdt/fdt_sw.c
+--- lib/libfdt/fdt_sw.c	2022-04-14 07:21:50.000000000 +0200
++++ lib/libfdt/fdt_sw.c	2022-08-07 22:18:57.838814929 +0200
+@@ -3,7 +3,7 @@
+  * Copyright (C) 2006 David Gibson, IBM Corporation.
+  * SPDX-License-Identifier:	GPL-2.0+ BSD-2-Clause
+  */
+-#include "libfdt_env.h"
++#include "../include/libfdt_env.h"
+ 
+ #include <fdt.h>
+ #include <libfdt.h>
+diff -u -ru lib/libfdt/fdt_wip.c lib/libfdt/fdt_wip.c
+--- lib/libfdt/fdt_wip.c	2022-04-14 07:21:50.000000000 +0200
++++ lib/libfdt/fdt_wip.c	2022-08-07 22:18:59.465507565 +0200
+@@ -3,7 +3,7 @@
+  * Copyright (C) 2006 David Gibson, IBM Corporation.
+  * SPDX-License-Identifier:	GPL-2.0+ BSD-2-Clause
+  */
+-#include "libfdt_env.h"
++#include "../include/libfdt_env.h"
+ 
+ #ifndef USE_HOSTCC
+ #include <fdt.h>
+diff -u -ru lib/libfdt/libfdt_internal.h lib/libfdt/libfdt_internal.h
+--- lib/libfdt/libfdt_internal.h	2022-04-14 07:21:50.000000000 +0200
++++ lib/libfdt/libfdt_internal.h	2022-08-07 22:18:06.304659595 +0200
+@@ -5,7 +5,7 @@
+  * Copyright (C) 2006 David Gibson, IBM Corporation.
+  * SPDX-License-Identifier:	GPL-2.0+ BSD-2-Clause
+  */
+-#include <fdt.h>
++#include "../include/fdt.h"
+ 
+ #define FDT_ALIGN(x, a)		(((x) + (a) - 1) & ~((a) - 1))
+ #define FDT_TAGALIGN(x)		(FDT_ALIGN((x), FDT_TAGSIZE))
