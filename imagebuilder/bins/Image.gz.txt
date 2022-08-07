@@ -1,0 +1,4 @@
+This is simply the last LTS kernel release built for arm64 as follows:
+* `make olddefconfig`
+* ensure VIRTIO_BLK, VIRTIO_NET, VIRTIO_PCI, NET_9P_VIRTIO, CRYPTO_DEV_VIRTIO, HW_RANDOM_VIRTIO are enabled
+* `sed 's/=m$/=n/g' -i .config`
