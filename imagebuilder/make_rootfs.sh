@@ -1,6 +1,7 @@
-#!/bin/bash -e
+#!/bin/bash
+set -e
 
-msg() { printf '\e[35;1m::\e[0m %s\n' "$1"; }
+msg() { printf '\e[35;1m~~~\e[0m %s\n' "$1"; }
 die() { msg "ERROR: $1"; exit 1; }
 
 target=./output/alarm-aarch64-latest.tar.gz
@@ -20,7 +21,6 @@ for exe in unshare bsdtar; do
 done
 
 # host -> chroot (target)
-
 
 tmpdir=
 active_mounts=()
@@ -46,6 +46,7 @@ pkgs=(
 	openssh net-tools
 	netctl # for wifi-menu
 	nano vi
+	archlinuxarm-keyring # hotfix until ALARM has fixed their `base`
 )
 
 msg "Running pacstrap"
@@ -79,7 +80,6 @@ target_chroot mkinitcpio -P
 target_chroot systemctl enable sshd.service systemd-{resolved,networkd,timesyncd}.service
 
 # system config
-# TODO: C.UTF-8 should work too
 target_chroot bash -c '
 echo alarm | install -T -m 644 /dev/stdin /etc/hostname
 echo LANG=C | install -T -m 644 /dev/stdin /etc/locale.conf
@@ -88,7 +88,7 @@ echo LANG=C | install -T -m 644 /dev/stdin /etc/locale.conf
 # network
 target_chroot bash -c '
 for prefix in en eth; do
-	install -T -m 644 /dev/stdin /etc/systemd/network/${prefix}.network <<"STOP"
+	install -T -m 644 /dev/stdin /etc/systemd/network/${prefix}.network <<STOP
 [Match]
 Name=${prefix}*
 
@@ -109,7 +109,7 @@ printf "%s\n" root:root alarm:alarm | chpasswd
 
 # cleanup
 target_chroot bash -c '
-yes | pacman -Scc
+pacman -Scc --noconfirm
 rm -r /root/.gnupg
 rm /var/log/pacman.log /etc/machine-id
 '

@@ -1,6 +1,7 @@
-#!/bin/bash -e
+#!/bin/bash
+set -e
 
-msg() { printf '\e[35;1m::\e[0m %s\n' "$1"; }
+msg() { printf '\e[35;1m~~~\e[0m %s\n' "$1"; }
 die() { msg "ERROR: $1"; exit 1; }
 
 device=quartz64-b
@@ -8,9 +9,9 @@ target=./output/alarm-${device}-latest.img.gz
 
 [ $EUID -eq 0 ] || die "Root privileges required"
 
-if [[ "$(uname -m)" != aarch64 ]]; then
-	die TODO # host -> vm (where the script runs) -> chroot (target)
-fi
+#if [[ "$(uname -m)" != aarch64 ]]; then
+#	die TODO # host -> vm (where the script runs) -> chroot (target)
+#fi
 
 for exe in sfdisk losetup mkfs.vfat mkfs.ext4 bsdtar pv; do
 	command -v "$exe" >/dev/null || die "Missing $exe"
@@ -39,7 +40,7 @@ _cleanup () {
 }
 trap _cleanup EXIT
 
-truncate -s 4G "./blk$$.bin"
+truncate -s 2G "./blk$$.bin"
 tmpfile=./blk$$.bin
 
 msg "Partitioning"
