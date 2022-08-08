@@ -1,0 +1,57 @@
+# U-Boot: Pine64 Quartz64 (both models)
+# Maintainer: sfan5 <sfan5@live.de>
+
+# Note: must be built on x86
+
+buildarch=8
+noautobuild=1
+
+pkgname=uboot-quartz64
+pkgver=2017.09
+pkgrel=1
+pkgdesc="U-Boot for Quartz64"
+arch=('aarch64')
+url="https://gitlab.com/pgwipeout/u-boot-rockchip"
+license=('GPL')
+install=$pkgname.install
+makedepends=('bc' 'python')
+_commit1=6336d2324985831ed766031f91d410d0e587dbc8 # quartz64 branch
+_commit2=ac64b3e9e57a7712187dc1bb6e83841232214ac8 # rkbin branch
+_toolchain=gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu
+source=("git+https://gitlab.com/pgwipeout/u-boot-rockchip.git/#commit=${_commit1}"
+        "https://gitlab.com/pgwipeout/quartz64_ci/-/raw/main/${_toolchain}.tar.xz"
+        "https://github.com/JeffyCN/rockchip_mirrors/archive/${_commit2}.tar.gz"
+        "git+https://github.com/eliben/pyelftools/#tag=v0.28"
+        'flash_uboot.sh')
+sha1sums=('SKIP'
+          '63d10832a8f21de68bd37a8e7f59be99d225258e'
+          'ece5e546fa9a795da9a5b4e80b1b2c59c866e4ed'
+          'SKIP'
+          'b102decb13e090f4fea9d582fcbb1716063430f8')
+
+prepare() {
+  ln -snf rockchip_mirrors-${_commit2} rkbin
+}
+
+build() {
+  cd u-boot-rockchip
+
+  unset CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
+  export PATH="${srcdir}/${_toolchain}/bin:$PATH"
+  export PYTHONPATH="${srcdir}/pyelftools"
+
+  make rk3566-quartz64_defconfig
+  sed '/^CONFIG_(ENV_IS|IDENT_STRING)/d' -i .config
+  printf '%s\n' CONFIG_ENV_IS_NOWHERE=y 'CONFIG_IDENT_STRING=" Arch Linux ARM"' >>.config
+
+  CROSS_COMPILE=aarch64-none-linux-gnu- ./make.sh
+  ./tools/resource_tool --pack arch/arm/dts/rk3566-quartz64.dtb
+}
+
+package() {
+  cd u-boot-rockchip
+
+  install -d "${pkgdir}"/boot
+  install -t "${pkgdir}"/boot "${srcdir}/flash_uboot.sh"
+  install -t "${pkgdir}"/boot -m 0644 idblock.bin uboot.img
+}

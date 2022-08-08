@@ -1,0 +1,7 @@
+post_install() {
+  /boot/flash_uboot.sh --auto
+}
+
+post_upgrade() {
+  /boot/flash_uboot.sh --auto
+}
