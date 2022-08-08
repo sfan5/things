@@ -3,6 +3,7 @@
 
 buildarch=8
 
+# Note: must be built on x86
 # Note: currently uses old config due to https://github.com/archlinuxarm/PKGBUILDs/pull/1840#issuecomment-1153150152
 
 pkgbase=linux-aarch64

@@ -50,9 +50,8 @@ unit: sectors
 first-lba: 34
 sector-size: 512
 
-start=64, size=   1M, type=L
+start=64, size=   1M, type=L, name="idblock"
 start= +, size=   8M, type=L, name="uboot"
-start= +, size=  32M, type=L, name="env"
 start= +, size= 512M, type=U, name="efi"
 start= +, size=    +, type=L, name="root"
 PARTS

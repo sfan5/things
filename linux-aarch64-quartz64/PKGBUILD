@@ -3,6 +3,8 @@
 
 buildarch=8
 
+# Note: must be built on x86
+
 pkgbase=linux-aarch64-quartz64
 _srcname=linux
 _desc="AArch64 multi-platform (git, with Quartz64 specific patches)"

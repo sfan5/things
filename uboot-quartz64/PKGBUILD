@@ -14,7 +14,7 @@ arch=('aarch64')
 url="https://gitlab.com/pgwipeout/u-boot-rockchip"
 license=('GPL')
 install=$pkgname.install
-makedepends=('bc' 'python')
+makedepends=('bc' 'dtc' 'python')
 _commit1=6336d2324985831ed766031f91d410d0e587dbc8 # quartz64 branch
 _commit2=ac64b3e9e57a7712187dc1bb6e83841232214ac8 # rkbin branch
 _toolchain=gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu
@@ -41,7 +41,6 @@ build() {
   export PYTHONPATH="${srcdir}/pyelftools"
 
   make rk3566-quartz64_defconfig
-  sed '/^CONFIG_(ENV_IS|IDENT_STRING)/d' -i .config
   printf '%s\n' CONFIG_ENV_IS_NOWHERE=y 'CONFIG_IDENT_STRING=" Arch Linux ARM"' >>.config
 
   CROSS_COMPILE=aarch64-none-linux-gnu- ./make.sh
