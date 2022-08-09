@@ -43,6 +43,7 @@ build() {
   cd ${_srcname}
 
   # get kernel version
+  export LOCALVERSION= # suppress + at end of version string
   ${_make} prepare
   ${_make} -s kernelrelease > version
 
