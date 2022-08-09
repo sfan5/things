@@ -16,15 +16,9 @@ license=('GPL2')
 makedepends=('kmod' 'inetutils' 'bc' 'git' 'dtc' 'aarch64-linux-gnu-gcc')
 options=('!strip')
 source=('git+https://github.com/sfan5/linux#branch=quartz64'
-        'config'
-        'linux.preset'
-        '60-linux.hook'
-        '90-linux.hook')
-md5sums=('SKIP'
-         'SKIP'
-         '41cb5fef62715ead2dd109dbea8413d6'
-         '0a5f16bfec6ad982a2f6782724cca8ba'
-         '3dc88030a8f2f5a5f97266d99b149f77')
+        'config')
+sha1sums=('SKIP'
+         '63193dd464ceed3d83bbbcbe0ee8f1adfb7f2812')
 
 _make='make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-'
 
@@ -66,7 +60,6 @@ _package() {
   provides=("linux=${pkgver}" "linux-aarch64=${pkgver}" WIREGUARD-MODULE KSMBD-MODULE)
   replaces=('linux-armv8')
   conflicts=('linux' 'linux-aarch64')
-  backup=("etc/mkinitcpio.d/${pkgbase}.preset")
   install=${pkgname}.install
 
   cd $_srcname
@@ -77,27 +70,15 @@ _package() {
   install -Dm644 arch/arm64/boot/Image{,.gz} -t "${pkgdir}/boot"
   ${_make} INSTALL_DTBS_PATH="${pkgdir}/boot/dtbs" dtbs_install
 
+  # Used by mkinitcpio to automatically handle the initramfs
+  install -Dm644 arch/arm64/boot/Image "$modulesdir/vmlinuz"
+  echo linux | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
+
   echo "Installing modules..."
   ${_make} INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
 
   # remove build and source links
   rm "$modulesdir"/{source,build}
-
-  # sed expression for following substitutions
-  local _subst="
-    s|%PKGBASE%|${pkgbase}|g
-    s|%KERNVER%|${kernver}|g
-  "
-
-  # install mkinitcpio preset file
-  sed "${_subst}" ../linux.preset |
-    install -Dm644 /dev/stdin "${pkgdir}/etc/mkinitcpio.d/${pkgbase}.preset"
-
-  # install pacman hooks
-  sed "${_subst}" ../60-linux.hook |
-    install -Dm644 /dev/stdin "${pkgdir}/usr/share/libalpm/hooks/60-${pkgbase}.hook"
-  sed "${_subst}" ../90-linux.hook |
-    install -Dm644 /dev/stdin "${pkgdir}/usr/share/libalpm/hooks/90-${pkgbase}.hook"
 }
 
 _package-headers() {
