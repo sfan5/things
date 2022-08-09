@@ -1,8 +1,9 @@
 #!/bin/bash
 set -e
+export LC_ALL=C
 
-msg() { printf '\e[35;1m~~~\e[0m %s\n' "$1"; }
-die() { msg "ERROR: $1"; exit 1; }
+source ./common.sh
+setup_cleanup_hook
 
 device=quartz64-b
 target=./output/alarm-${device}-latest.img.gz
@@ -13,11 +14,7 @@ target=./output/alarm-${device}-latest.img.gz
 #	die TODO # host -> vm (where the script runs) -> chroot (target)
 #fi
 
-for exe in sfdisk losetup mkfs.vfat mkfs.ext4 bsdtar pv; do
-	command -v "$exe" >/dev/null || die "Missing $exe"
-done
-
-# host -> chroot (target)
+check_tools sfdisk losetup mkfs.vfat mkfs.ext4 bsdtar pv
 
 source=./output/alarm-aarch64-latest.tar.gz
 [ -s "$source" ] || die "Missing the rootfs at $source"
@@ -32,13 +29,11 @@ cleanup_mount () {
 		mntdir=
 	fi
 }
-_cleanup () {
-	set +e
-	cleanup_mount
+_cleanup_other () {
 	[ -n "$loopdev" ] && { losetup -d "$loopdev"; loopdev=; }
 	[ -n "$tmpfile" ] && { rm "$tmpfile"; tmpfile=; }
 }
-trap _cleanup EXIT
+add_cleanup_hook cleanup_mount _cleanup_other
 
 truncate -s 2G "./blk$$.bin"
 tmpfile=./blk$$.bin
@@ -59,8 +54,8 @@ PARTS
 loopdev=$(losetup -fP --show "$tmpfile")
 echo "Loop device: $loopdev"
 
-mkfs.vfat -F32 -n efi "${loopdev}p4"
-mkfs.ext4 -L rootfs "${loopdev}p5"
+mkfs.vfat -F32 -n efi "${loopdev}p3"
+mkfs.ext4 -L rootfs "${loopdev}p4"
 
 # TODO: a bootloader package should handle this
 cat <bins/idblock.bin >"${loopdev}p1"
@@ -69,9 +64,9 @@ cat <bins/uboot.img >"${loopdev}p2"
 mkdir "./mnt$$"
 mntdir=./mnt$$
 
-mount "${loopdev}p5" "$mntdir" -o noatime
+mount "${loopdev}p4" "$mntdir" -o noatime
 install -d -m 755 "$mntdir/boot"
-mount "${loopdev}p4" "$mntdir/boot" -o noatime
+mount "${loopdev}p3" "$mntdir/boot" -o noatime
 
 msg "Extracting"
 bsdtar -xpf "$source" -C "$mntdir"

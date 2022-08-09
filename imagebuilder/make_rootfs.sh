@@ -1,119 +1,34 @@
 #!/bin/bash
 set -e
+export LC_ALL=C
 
-msg() { printf '\e[35;1m~~~\e[0m %s\n' "$1"; }
-die() { msg "ERROR: $1"; exit 1; }
+source ./common.sh
+setup_cleanup_hook
 
 target=./output/alarm-aarch64-latest.tar.gz
 
 [ $EUID -eq 0 ] || die "Root privileges required"
 
-if [ -n "$INVM" ]; then ########################################################
+relaunch_in_vm "$target" && :
+r=$?
 
-# host -> vm (where the script runs)
-#         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+if [ $r -eq 3 ]; then
+	pacman-key --init && pacman-key --populate
+	pacman -S --noconfirm --needed arch-install-scripts
 
-systemd-detect-virt -v || die "not meant to be"
-[[ "$(uname -m)" == aarch64 ]] || die "not meant to be"
-
-msg "Installing requirements"
-# apply some options to improve performance (placebo?)
-echo 0 >/proc/sys/kernel/randomize_va_space 
-mount '' / -o remount,commit=3600
-dd if=/dev/hwrng of=/dev/random count=16
-#
-pacman-key --init && pacman-key --populate
-pacman -S --noconfirm --needed arch-install-scripts
-
-# put temporary files on rootfs, that'll be faster
-WORKDIR=/root
-
+	# put temporary files on rootfs, that'll be faster
+	WORKDIR=/root
+elif [ $r -eq 1 ]; then
+	die "Error occurred ($?)"
+elif [ $r -eq 0 ]; then
+	exit 0
 fi
-if [[ "$(uname -m)" != aarch64 ]]; then ########################################
-
-# host -> vm (where the script runs)
-# ^^^^
-
-[ -s "$target" ] || die "Need a previous rootfs build to bootstrap"
-for exe in mkfs.ext4 bsdtar qemu-system-aarch64; do
-	command -v "$exe" >/dev/null || die "Missing $exe"
-done
-
-msg "Preparing VM"
-
-mntdir=
-tmpfile=
-cleanup_mount () {
-	if [ -n "$mntdir" ]; then
-		umount "$mntdir"
-		rmdir "$mntdir"
-		mntdir=
-	fi
-}
-_cleanup () {
-	set +e
-	cleanup_mount
-	[ -n "$tmpfile" ] && { rm "$tmpfile"; tmpfile=; }
-}
-trap _cleanup EXIT
-
-truncate -s 5G "./vm$$.bin"
-tmpfile=./vm$$.bin
-
-mkfs.ext4 -q "$tmpfile"
-
-mkdir "./mnt$$"
-mntdir=./mnt$$
-
-mount "$tmpfile" "$mntdir" -o loop,noatime
-
-bsdtar -xpf "$target" -C "$mntdir"
-# get rid of interference
-rm "$mntdir/usr/lib/systemd/system/multi-user.target.wants/getty.target" \
-	"$mntdir/usr/lib/systemd/system/sysinit.target.wants/systemd-firstboot.service"
-# configure the 9p mount
-printf '%s\t' >>"$mntdir/etc/fstab" \
-	shared /mnt 9p trans=virtio,version=9p2000.L,msize=104857600
-printf '\n' >>"$mntdir/etc/fstab"
-# add a service that runs us on startup
-printf '%s\n' >"$mntdir/etc/systemd/system/script.service" \
-	[Unit] RequiresMountsFor=/mnt {Failure,Success}Action=poweroff-force \
-	[Service] Type=oneshot Environment=INVM=1 Standard{Output,Error}=tty \
-	WorkingDirectory=/mnt ExecStart=/mnt/make_rootfs.sh
-ln -s "etc/systemd/system/script.service" "$mntdir/etc/systemd/system/multi-user.target.wants/"
-
-cleanup_mount
-
-msg "Re-launching in VM"
-args=(
-	-M virt -cpu cortex-a53 -m 2048 -smp 2
-	-kernel bins/Image.gz
-	-nic user,model=virtio
-	-drive file="$tmpfile",if=virtio,format=raw,cache=unsafe
-	# current folder shared via 9p
-	-fsdev local,id=shared,path="$PWD",security_model=none
-	-device virtio-9p-pci,fsdev=shared,mount_tag=shared
-	# hopefully speeds up cryptograhic ops in guest
-	-device virtio-rng-pci
-	# remove 'quiet' to see systemd and kernel output
-	-append "root=/dev/vda rw quiet" -nographic
-)
-qemu-system-aarch64 "${args[@]}"
-
-# FIXME: somehow extract the exit code from inside the vm
-exit 0
-
-fi #############################################################################
 
 if ! command -v pacstrap; then
 	die TODO # should this be supported?
 fi
 
-for exe in unshare bsdtar; do
-	command -v "$exe" >/dev/null || die "Missing $exe"
-done
-
-# host -> chroot (target)
+check_tools unshare bsdtar
 
 tmpdir=
 active_mounts=()
@@ -148,7 +63,7 @@ pacstrap -c -GM "$tmpdir" "${pkgs[@]}"
 
 msg "Applying customizations"
 target_chroot () {
-	PATH=/usr/bin unshare -R "$tmpdir" -- "$@" </dev/null
+	run_in_target "$tmpdir" "$@"
 }
 add_mount () {
 	local from="$1"
