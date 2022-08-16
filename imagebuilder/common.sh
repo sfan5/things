@@ -33,7 +33,7 @@ _vm_cleanup() {
 	if [ -n "$vmntdir" ]; then
 		umount "$vmntdir"
 		rmdir "$vmntdir"
-		vmmntdir=
+		vmntdir=
 	fi
 	[ -n "$1" ] && return
 	[ -n "$vtmpfile" ] && { rm "$vtmpfile"; vtmpfile=; }

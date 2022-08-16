@@ -53,7 +53,6 @@ pkgs=(
 	base
 	linux-aarch64 linux-firmware
 	openssh net-tools
-	netctl # for wifi-menu
 	nano vi
 	archlinuxarm-keyring # hotfix until ALARM has fixed their `base`
 )
