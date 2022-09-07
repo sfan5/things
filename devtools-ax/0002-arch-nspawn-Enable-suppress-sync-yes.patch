@@ -1,0 +1,25 @@
+From e3eead5b40fea874671378c5b1e8df99e0439dd8 Mon Sep 17 00:00:00 2001
+From: "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>
+Date: Thu, 11 Aug 2022 18:18:46 +0200
+Subject: [PATCH 2/6] arch-nspawn: Enable --suppress-sync=yes
+
+Should improve container performance when tmpfs is not in use.
+---
+ src/arch-nspawn.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/arch-nspawn.in b/src/arch-nspawn.in
+index 275cff7..8c3ecbd 100644
+--- a/src/arch-nspawn.in
++++ b/src/arch-nspawn.in
+@@ -125,6 +125,6 @@ fi
+ exec ${CARCH:+setarch "$set_arch"} systemd-nspawn -q \
+ 	-D "$working_dir" \
+ 	-E "PATH=/usr/local/sbin:/usr/local/bin:/usr/bin" \
+-	--register=no --keep-unit --as-pid2 \
++	--register=no --keep-unit --as-pid2 --suppress-sync=yes \
+ 	"${mount_args[@]}" \
+ 	"$@"
+-- 
+2.37.2
+

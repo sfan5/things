@@ -1,0 +1,27 @@
+From e3adf06cf3d8d0d014103ed4605bb7cb178f3f6c Mon Sep 17 00:00:00 2001
+From: sfan5 <sfan5@live.de>
+Date: Wed, 7 Sep 2022 22:36:46 +0200
+Subject: [PATCH 6/6] arch-nspawn: deal with differing mirror dir naming
+ convention correctly
+
+---
+ src/arch-nspawn.in | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/arch-nspawn.in b/src/arch-nspawn.in
+index 8c3ecbd..482b46b 100644
+--- a/src/arch-nspawn.in
++++ b/src/arch-nspawn.in
+@@ -54,7 +54,8 @@ if (( ${#cache_dirs[@]} == 0 )); then
+ fi
+ 
+ # shellcheck disable=2016
+-host_mirrors=($(pacman-conf --repo extra Server 2> /dev/null | sed -r 's#(.*/)extra/os/.*#\1$repo/os/$arch#'))
++host_mirrors=($(pacman-conf --repo extra Server 2> /dev/null | \
++	sed -r -e 's#(.*/)extra/os/.*#\1$repo/os/$arch#' -e 's#(.*/)extra$#\1$repo#'))
+ 
+ for host_mirror in "${host_mirrors[@]}"; do
+ 	if [[ $host_mirror == *file://* ]]; then
+-- 
+2.37.2
+

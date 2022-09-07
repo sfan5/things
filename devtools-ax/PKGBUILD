@@ -1,0 +1,47 @@
+pkgname=devtools-ax
+_commit=f8d2ad9a7dcd4a5345f53095d7d36c17cc8aa2fd
+pkgver=20220709
+pkgrel=1
+pkgdesc='Tools for Arch Linux package maintainers (customized)'
+arch=('any')
+license=('GPL')
+url='https://gitlab.archlinux.org/archlinux/devtools'
+depends=('bash' 'openssh' 'rsync' 'arch-install-scripts'
+         'git' 'diffutils' 'util-linux' 'awk')
+makedepends=('asciidoc')
+optdepends=('btrfs-progs: btrfs support')
+source=(
+  "git+https://gitlab.archlinux.org/archlinux/devtools.git#commit=${_commit}"
+  0001-archbuild-disable-namcap-by-default.patch
+  0002-arch-nspawn-Enable-suppress-sync-yes.patch
+  0003-Makefile-get-rid-of-svn-related-tools.patch
+  0004-config-add-aarch64-build-configs.patch
+  0005-mkarchroot-remove-de_DE-locale.patch
+  0006-arch-nspawn-deal-with-differing-mirror-dir-naming-co.patch
+)
+sha256sums=('SKIP'
+            '9800e6b3aa7328698df318738c5738331b76c40449e3c82974bef01a385c98cc'
+            '088b5603095dad12146148d5e7c74491e44607b7192b1c181073258d544f3df5'
+            'de349d0609cfee42ea468746b1bca1e362b6aee65c43e49fc4bf2fdd0a34c1da'
+            'cd71a1ae79662b441aff9dd2e1b92f8c26f4336e46b14ad92d48576892e3d28d'
+            'c89d49b98653db2d834b4b8788c9af2d370b89ccd2137f641bcb9efd7f806ffd'
+            'ee278eb522def51d6890aee35db328844e4b25e0190424c6f0275d7a2603e725')
+
+prepare() {
+  cd devtools
+  for src in "${source[@]}"; do
+    [[ "$src" == *.patch ]] && patch -p1 -i "../$src"
+  done
+}
+
+build() {
+  cd devtools
+  make BUILDTOOLVER="${pkgver}-${pkgrel}-${arch}" PREFIX=/usr
+}
+
+package() {
+  cd devtools
+  make PREFIX=/usr DESTDIR="${pkgdir}" install
+}
+
+# vim: ts=2 sw=2 et:
