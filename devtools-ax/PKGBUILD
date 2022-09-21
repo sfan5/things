@@ -10,6 +10,7 @@ depends=('bash' 'openssh' 'rsync' 'arch-install-scripts'
          'git' 'diffutils' 'util-linux' 'awk')
 makedepends=('asciidoc')
 optdepends=('btrfs-progs: btrfs support')
+conflicts=('devtools')
 source=(
   "git+https://gitlab.archlinux.org/archlinux/devtools.git#commit=${_commit}"
   0001-archbuild-disable-namcap-by-default.patch
