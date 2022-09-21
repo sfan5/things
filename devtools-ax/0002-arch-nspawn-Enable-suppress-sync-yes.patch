@@ -1,7 +1,7 @@
 From 3329843334aeb661d88be4ff2ff865f68526eece Mon Sep 17 00:00:00 2001
 From: "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>
 Date: Thu, 11 Aug 2022 18:18:46 +0200
-Subject: [PATCH 2/7] arch-nspawn: Enable --suppress-sync=yes
+Subject: [PATCH 2/8] arch-nspawn: Enable --suppress-sync=yes
 
 Should improve container performance when tmpfs is not in use.
 ---

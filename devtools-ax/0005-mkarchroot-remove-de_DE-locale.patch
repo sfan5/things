@@ -1,7 +1,7 @@
 From 25a2e67cc6d43153c67b396401c67f0b6cde0343 Mon Sep 17 00:00:00 2001
 From: sfan5 <sfan5@live.de>
 Date: Wed, 7 Sep 2022 22:30:43 +0200
-Subject: [PATCH 5/7] mkarchroot: remove de_DE locale
+Subject: [PATCH 5/8] mkarchroot: remove de_DE locale
 
 ---
  src/mkarchroot.in | 2 +-

@@ -1,7 +1,7 @@
 pkgname=devtools-ax
 _commit=fcaf3ecec0f835cc480fdeb653d33754b0de7624
 pkgver=20220801
-pkgrel=1
+pkgrel=2
 pkgdesc='Tools for Arch Linux package maintainers (customized)'
 arch=('any')
 license=('GPL')
@@ -20,15 +20,17 @@ source=(
   0005-mkarchroot-remove-de_DE-locale.patch
   0006-arch-nspawn-deal-with-differing-mirror-dir-naming-co.patch
   0007-configs-add-aarch64-cross-compile-build-configs.patch
+  0008-arch-nspawn-set-console-mode-to-autopipe.patch
 )
 sha256sums=('SKIP'
-            'da00b5bb9ee1bc6fd8f1bb684f6a813208773dc3238d2c0eddf1cc2380e2d623'
-            'cfe321d753f4c7a1a083b9778deb41700091b03a327a724797e9b006e5c8a7c8'
-            'd63c2a0542fac92cf0a6ce355d92bdd4d1c12f929e74602da1f8dbabe78135f7'
-            '1fbc22ef1db5a2185d455f1c1960d237bd451d0d9b6683a568cd89ddabd177fe'
-            '12b4de25d1d2c60e94bfc3169cc6d5e1577915b7cac6aab6c4b275ce17797c7c'
-            'b0113c51b426ce84e43bc206aeaa45c96e7907ae76bc83b526972dedbde8258a'
-            '0e2f46be67acac668856c887064e99f6d6a5af4e98050c46973318e2db320292')
+            'bb364a4edfbecfb99706bb71e31006012858a8a7a669acf21bc564477a1b7f80'
+            '7d2acf41812ca2f0c28dd0d9bf4574f27a0c957a8199b3ca6e8da05491e6f411'
+            'c7db735ae90dbc232b13dfc97e861b5a994b3964f0865298c48afa7722a24e67'
+            '5172e06fa9fbf02b73d6eb0796aab88129ca8228b8b79552cf921883a218184c'
+            '79b86fd8ebe86d4a682f6cc37c04ba723545894d590b8cba1163ff9dd8755e06'
+            '8b36160ad668dc20b1b86259d199fc568351e0f434090858c590c6a53db945b7'
+            '0e6a49d684702e27306d845d4cd4db0005aa25cfc5c6501c89011aa637fa1cbd'
+            '8aee7a6d03935c140c063cc8c4e33a038e22a71a5d268ccb512b0637c27ea631')
 
 prepare() {
   cd devtools

@@ -1,7 +1,7 @@
 From edf7137b32e4101d328ce2c0a0e514efc88cc6d6 Mon Sep 17 00:00:00 2001
 From: sfan5 <sfan5@live.de>
 Date: Wed, 7 Sep 2022 22:36:46 +0200
-Subject: [PATCH 6/7] arch-nspawn: deal with differing mirror dir naming
+Subject: [PATCH 6/8] arch-nspawn: deal with differing mirror dir naming
  convention correctly
 
 ---

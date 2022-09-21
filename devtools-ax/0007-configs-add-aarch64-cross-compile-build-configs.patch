@@ -1,7 +1,7 @@
 From 3be209b74cebb8c6f9fe5ee07421210a37f1504e Mon Sep 17 00:00:00 2001
 From: sfan5 <sfan5@live.de>
 Date: Wed, 21 Sep 2022 11:52:25 +0200
-Subject: [PATCH 7/7] configs: add aarch64 cross-compile build configs
+Subject: [PATCH 7/8] configs: add aarch64 cross-compile build configs
 
 ---
  Makefile                             |   9 +-

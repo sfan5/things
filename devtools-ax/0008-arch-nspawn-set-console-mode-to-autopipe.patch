@@ -1,0 +1,28 @@
+From 7743bce40c7ad9161c1b4c43412aab0f9b39a400 Mon Sep 17 00:00:00 2001
+From: sfan5 <sfan5@live.de>
+Date: Wed, 21 Sep 2022 13:47:04 +0200
+Subject: [PATCH 8/8] arch-nspawn: set console mode to autopipe
+
+systemd-nspawn sets up a pts in the container by default
+which build scripts might use to ask for interactive input.
+This is only okay if the host side is also a TTY.
+The 'autopipe' mode deals with this situation appropriately.
+---
+ src/arch-nspawn.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/arch-nspawn.in b/src/arch-nspawn.in
+index 482b46b..d9304bf 100644
+--- a/src/arch-nspawn.in
++++ b/src/arch-nspawn.in
+@@ -126,6 +126,6 @@ fi
+ exec ${CARCH:+setarch "$set_arch"} systemd-nspawn -q \
+ 	-D "$working_dir" \
+ 	-E "PATH=/usr/local/sbin:/usr/local/bin:/usr/bin" \
+-	--register=no --keep-unit --as-pid2 --suppress-sync=yes \
++	--register=no --keep-unit --as-pid2 --suppress-sync=yes --console=autopipe \
+ 	"${mount_args[@]}" \
+ 	"$@"
+-- 
+2.37.3
+

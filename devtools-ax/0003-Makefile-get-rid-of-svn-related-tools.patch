@@ -1,7 +1,7 @@
 From db7054b68f295038dfcf2c211be353c19288e489 Mon Sep 17 00:00:00 2001
 From: sfan5 <sfan5@live.de>
 Date: Wed, 7 Sep 2022 21:01:26 +0200
-Subject: [PATCH 3/7] Makefile: get rid of svn-related tools
+Subject: [PATCH 3/8] Makefile: get rid of svn-related tools
 
 ---
  Makefile | 3 +++

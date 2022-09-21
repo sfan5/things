@@ -1,7 +1,7 @@
 From dac3c054f612ea8d926143bcf0e25dd623c29530 Mon Sep 17 00:00:00 2001
 From: sfan5 <sfan5@live.de>
 Date: Wed, 7 Sep 2022 18:43:36 +0200
-Subject: [PATCH 1/7] archbuild: disable namcap by default
+Subject: [PATCH 1/8] archbuild: disable namcap by default
 
 ---
  src/archbuild.in | 2 +-
