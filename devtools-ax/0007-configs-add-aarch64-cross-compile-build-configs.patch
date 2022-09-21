@@ -1,0 +1,450 @@
+From 3be209b74cebb8c6f9fe5ee07421210a37f1504e Mon Sep 17 00:00:00 2001
+From: sfan5 <sfan5@live.de>
+Date: Wed, 21 Sep 2022 11:52:25 +0200
+Subject: [PATCH 7/7] configs: add aarch64 cross-compile build configs
+
+---
+ Makefile                             |   9 +-
+ config/makepkg/x_aarch64.conf        | 163 +++++++++++++++++++++++++++
+ config/pacman/extra-x_aarch64.conf   |  95 ++++++++++++++++
+ config/pacman/staging-x_aarch64.conf |  99 ++++++++++++++++
+ src/archbuild.in                     |   9 +-
+ 5 files changed, 371 insertions(+), 4 deletions(-)
+ create mode 100644 config/makepkg/x_aarch64.conf
+ create mode 100644 config/pacman/extra-x_aarch64.conf
+ create mode 100644 config/pacman/staging-x_aarch64.conf
+
+diff --git a/Makefile b/Makefile
+index 43cd822..b84b3b8 100644
+--- a/Makefile
++++ b/Makefile
+@@ -49,11 +49,14 @@ BASHCOMPLETION_LINKS = \
+ 
+ 
+ ARCHBUILD_LINKS = \
+-	extra-aarch64-build staging-aarch64-build
++	extra-aarch64-build staging-aarch64-build \
++	extra-aarch64-crossbuild staging-aarch64-crossbuild
+ MAKEPKG_CONFIGS = \
+-	config/makepkg/aarch64.conf
++	config/makepkg/aarch64.conf \
++	config/makepkg/x_aarch64.conf
+ PACMAN_CONFIGS = \
+-	config/pacman/extra.conf config/pacman/staging.conf
++	config/pacman/extra.conf config/pacman/staging.conf \
++	config/pacman/extra-x_aarch64.conf config/pacman/staging-x_aarch64.conf
+ 
+ 
+ all: binprogs completion man
+diff --git a/config/makepkg/x_aarch64.conf b/config/makepkg/x_aarch64.conf
+new file mode 100644
+index 0000000..9be00e1
+--- /dev/null
++++ b/config/makepkg/x_aarch64.conf
+@@ -0,0 +1,163 @@
++#!/hint/bash
++# shellcheck disable=2034
++
++#
++# /etc/makepkg.conf
++#
++
++#########################################################################
++# SOURCE ACQUISITION
++#########################################################################
++#
++#-- The download utilities that makepkg should use to acquire sources
++#  Format: 'protocol::agent'
++DLAGENTS=('file::/usr/bin/curl -qgC - -o %o %u'
++          'ftp::/usr/bin/curl -qgfC - --ftp-pasv --retry 3 --retry-delay 3 -o %o %u'
++          'http::/usr/bin/curl -qgb "" -fLC - --retry 3 --retry-delay 3 -o %o %u'
++          'https::/usr/bin/curl -qgb "" -fLC - --retry 3 --retry-delay 3 -o %o %u'
++          'rsync::/usr/bin/rsync --no-motd -z %u %o'
++          'scp::/usr/bin/scp -C %u %o')
++
++# Other common tools:
++# /usr/bin/snarf
++# /usr/bin/lftpget -c
++# /usr/bin/wget
++
++#-- The package required by makepkg to download VCS sources
++#  Format: 'protocol::package'
++VCSCLIENTS=('bzr::bzr'
++            'fossil::fossil'
++            'git::git'
++            'hg::mercurial'
++            'svn::subversion')
++
++#########################################################################
++# ARCHITECTURE, COMPILE FLAGS
++#########################################################################
++#
++CARCH="aarch64"
++CHOST="aarch64-unknown-linux-gnu"
++
++# Cross builds are only meant for low-level components like kernel or bootloaders
++# so there's no compile flags here.
++
++#-- Compiler and Linker Flags
++#CPPFLAGS=""
++CFLAGS=""
++CXXFLAGS=""
++LDFLAGS=""
++LTOFLAGS=""
++#RUSTFLAGS="-C opt-level=2"
++#-- Make Flags: change this for DistCC/SMP systems
++#MAKEFLAGS="-j2"
++#-- Debugging flags
++DEBUG_CFLAGS=""
++DEBUG_CXXFLAGS=""
++#DEBUG_RUSTFLAGS="-C debuginfo=2"
++
++#########################################################################
++# BUILD ENVIRONMENT
++#########################################################################
++#
++# Makepkg defaults: BUILDENV=(!distcc !color !ccache check !sign)
++#  A negated environment option will do the opposite of the comments below.
++#
++#-- distcc:   Use the Distributed C/C++/ObjC compiler
++#-- color:    Colorize output messages
++#-- ccache:   Use ccache to cache compilation
++#-- check:    Run the check() function if present in the PKGBUILD
++#-- sign:     Generate PGP signature file
++#
++BUILDENV=(!distcc color !ccache check !sign)
++#
++#-- If using DistCC, your MAKEFLAGS will also need modification. In addition,
++#-- specify a space-delimited list of hosts running in the DistCC cluster.
++#DISTCC_HOSTS=""
++#
++#-- Specify a directory for package building.
++#BUILDDIR=/tmp/makepkg
++
++#########################################################################
++# GLOBAL PACKAGE OPTIONS
++#   These are default values for the options=() settings
++#########################################################################
++#
++# Makepkg defaults: OPTIONS=(!strip docs libtool staticlibs emptydirs !zipman !purge !debug !lto)
++#  A negated option will do the opposite of the comments below.
++#
++#-- strip:      Strip symbols from binaries/libraries
++#-- docs:       Save doc directories specified by DOC_DIRS
++#-- libtool:    Leave libtool (.la) files in packages
++#-- staticlibs: Leave static library (.a) files in packages
++#-- emptydirs:  Leave empty directories in packages
++#-- zipman:     Compress manual (man and info) pages in MAN_DIRS with gzip
++#-- purge:      Remove files specified by PURGE_TARGETS
++#-- debug:      Add debugging flags as specified in DEBUG_* variables
++#-- lto:        Add compile flags for building with link time optimization
++#
++OPTIONS=(strip docs !libtool !staticlibs emptydirs zipman purge !debug lto)
++
++#-- File integrity checks to use. Valid: md5, sha1, sha224, sha256, sha384, sha512, b2
++INTEGRITY_CHECK=(sha256)
++#-- Options to be used when stripping binaries. See `man strip' for details.
++STRIP_BINARIES="--strip-all"
++#-- Options to be used when stripping shared libraries. See `man strip' for details.
++STRIP_SHARED="--strip-unneeded"
++#-- Options to be used when stripping static libraries. See `man strip' for details.
++STRIP_STATIC="--strip-debug"
++#-- Manual (man and info) directories to compress (if zipman is specified)
++MAN_DIRS=({usr{,/local}{,/share},opt/*}/{man,info})
++#-- Doc directories to remove (if !docs is specified)
++DOC_DIRS=(usr/{,local/}{,share/}{doc,gtk-doc} opt/*/{doc,gtk-doc})
++#-- Files to be removed from all packages (if purge is specified)
++PURGE_TARGETS=(usr/{,share}/info/dir .packlist *.pod)
++#-- Directory to store source code in for debug packages
++DBGSRCDIR="/usr/src/debug"
++
++#########################################################################
++# PACKAGE OUTPUT
++#########################################################################
++#
++# Default: put built package and cached source in build directory
++#
++#-- Destination: specify a fixed directory where all packages will be placed
++#PKGDEST=/home/packages
++#-- Source cache: specify a fixed directory where source files will be cached
++#SRCDEST=/home/sources
++#-- Source packages: specify a fixed directory where all src packages will be placed
++#SRCPKGDEST=/home/srcpackages
++#-- Log files: specify a fixed directory where all log files will be placed
++#LOGDEST=/home/makepkglogs
++#-- Packager: name/email of the person or organization building packages
++#PACKAGER="John Doe <john@doe.com>"
++#-- Specify a key to use for package signing
++#GPGKEY=""
++
++#########################################################################
++# COMPRESSION DEFAULTS
++#########################################################################
++#
++COMPRESSGZ=(gzip -c -f -n)
++COMPRESSBZ2=(bzip2 -c -f)
++COMPRESSXZ=(xz -c -z -)
++COMPRESSZST=(zstd -c -T0 -9 -)
++COMPRESSLRZ=(lrzip -q)
++COMPRESSLZO=(lzop -q)
++COMPRESSZ=(compress -c -f)
++COMPRESSLZ4=(lz4 -q)
++COMPRESSLZ=(lzip -c -f)
++
++#########################################################################
++# EXTENSION DEFAULTS
++#########################################################################
++#
++PKGEXT='.pkg.tar.zst'
++SRCEXT='.src.tar.gz'
++
++#########################################################################
++# OTHER
++#########################################################################
++#
++#-- Command used to run pacman as root, instead of trying sudo and su
++#PACMAN_AUTH=()
++# vim: set ft=sh ts=2 sw=2 et:
+diff --git a/config/pacman/extra-x_aarch64.conf b/config/pacman/extra-x_aarch64.conf
+new file mode 100644
+index 0000000..8a6bb42
+--- /dev/null
++++ b/config/pacman/extra-x_aarch64.conf
+@@ -0,0 +1,95 @@
++#
++# /etc/pacman.conf
++#
++# See the pacman.conf(5) manpage for option and repository directives
++
++#
++# GENERAL OPTIONS
++#
++[options]
++# The following paths are commented out with their default values listed.
++# If you wish to use different paths, uncomment and update the paths.
++#RootDir     = /
++#DBPath      = /var/lib/pacman/
++#CacheDir    = /var/cache/pacman/pkg/
++#LogFile     = /var/log/pacman.log
++#GPGDir      = /etc/pacman.d/gnupg/
++#HookDir     = /etc/pacman.d/hooks/
++HoldPkg     = pacman glibc
++#XferCommand = /usr/bin/curl -L -C - -f -o %o %u
++#XferCommand = /usr/bin/wget --passive-ftp -c -O %o %u
++#CleanMethod = KeepInstalled
++Architecture = auto
++
++# Pacman won't upgrade packages listed in IgnorePkg and members of IgnoreGroup
++#IgnorePkg   =
++#IgnoreGroup =
++
++#NoUpgrade   =
++#NoExtract   =
++
++# Misc options
++#UseSyslog
++#Color
++NoProgressBar
++# We cannot check disk space from within a chroot environment
++#CheckSpace
++VerbosePkgLists
++ParallelDownloads = 5
++
++# By default, pacman accepts packages signed by keys that its local keyring
++# trusts (see pacman-key and its man page), as well as unsigned packages.
++SigLevel    = Required DatabaseOptional
++LocalFileSigLevel = Optional
++#RemoteFileSigLevel = Required
++
++# NOTE: You must run `pacman-key --init` before first using pacman; the local
++# keyring can then be populated with the keys of all official Arch Linux
++# packagers with `pacman-key --populate archlinux`.
++
++#
++# REPOSITORIES
++#   - can be defined here or included from another file
++#   - pacman will search repositories in the order defined here
++#   - local/custom mirrors can be added here or in separate files
++#   - repositories listed first will take precedence when packages
++#     have identical names, regardless of version number
++#   - URLs will have $repo replaced by the name of the current repo
++#   - URLs will have $arch replaced by the name of the architecture
++#
++# Repository entries are of the format:
++#       [repo-name]
++#       Server = ServerName
++#       Include = IncludePath
++#
++# The header [repo-name] is crucial - it must be present and
++# uncommented to enable the repo.
++#
++
++# The testing repositories are disabled by default. To enable, uncomment the
++# repo name header and Include lines. You can add preferred servers immediately
++# after the header, and they will be used before the default mirrors.
++
++[ax]
++SigLevel = PackageOptional
++Server = http://b.pantsu.cloud/ax/
++
++# these are the normal Arch repos:
++
++[core]
++Include = /etc/pacman.d/mirrorlist
++
++[extra]
++Include = /etc/pacman.d/mirrorlist
++
++[community]
++Include = /etc/pacman.d/mirrorlist
++
++[multilib]
++Include = /etc/pacman.d/mirrorlist
++
++# An example of a custom package repository.  See the pacman manpage for
++# tips on creating your own repositories.
++#[custom]
++#SigLevel = Optional TrustAll
++#Server = file:///home/custompkgs
+diff --git a/config/pacman/staging-x_aarch64.conf b/config/pacman/staging-x_aarch64.conf
+new file mode 100644
+index 0000000..898c3fa
+--- /dev/null
++++ b/config/pacman/staging-x_aarch64.conf
+@@ -0,0 +1,99 @@
++#
++# /etc/pacman.conf
++#
++# See the pacman.conf(5) manpage for option and repository directives
++
++#
++# GENERAL OPTIONS
++#
++[options]
++# The following paths are commented out with their default values listed.
++# If you wish to use different paths, uncomment and update the paths.
++#RootDir     = /
++#DBPath      = /var/lib/pacman/
++#CacheDir    = /var/cache/pacman/pkg/
++#LogFile     = /var/log/pacman.log
++#GPGDir      = /etc/pacman.d/gnupg/
++#HookDir     = /etc/pacman.d/hooks/
++HoldPkg     = pacman glibc
++#XferCommand = /usr/bin/curl -L -C - -f -o %o %u
++#XferCommand = /usr/bin/wget --passive-ftp -c -O %o %u
++#CleanMethod = KeepInstalled
++Architecture = auto
++
++# Pacman won't upgrade packages listed in IgnorePkg and members of IgnoreGroup
++#IgnorePkg   =
++#IgnoreGroup =
++
++#NoUpgrade   =
++#NoExtract   =
++
++# Misc options
++#UseSyslog
++#Color
++NoProgressBar
++# We cannot check disk space from within a chroot environment
++#CheckSpace
++VerbosePkgLists
++ParallelDownloads = 5
++
++# By default, pacman accepts packages signed by keys that its local keyring
++# trusts (see pacman-key and its man page), as well as unsigned packages.
++SigLevel    = Required DatabaseOptional
++LocalFileSigLevel = Optional
++#RemoteFileSigLevel = Required
++
++# NOTE: You must run `pacman-key --init` before first using pacman; the local
++# keyring can then be populated with the keys of all official Arch Linux
++# packagers with `pacman-key --populate archlinux`.
++
++#
++# REPOSITORIES
++#   - can be defined here or included from another file
++#   - pacman will search repositories in the order defined here
++#   - local/custom mirrors can be added here or in separate files
++#   - repositories listed first will take precedence when packages
++#     have identical names, regardless of version number
++#   - URLs will have $repo replaced by the name of the current repo
++#   - URLs will have $arch replaced by the name of the architecture
++#
++# Repository entries are of the format:
++#       [repo-name]
++#       Server = ServerName
++#       Include = IncludePath
++#
++# The header [repo-name] is crucial - it must be present and
++# uncommented to enable the repo.
++#
++
++# The testing repositories are disabled by default. To enable, uncomment the
++# repo name header and Include lines. You can add preferred servers immediately
++# after the header, and they will be used before the default mirrors.
++
++[ax-staging]
++SigLevel = PackageOptional
++Server = http://b.pantsu.cloud/ax-staging/
++
++[ax]
++SigLevel = PackageOptional
++Server = http://b.pantsu.cloud/ax/
++
++# these are the normal Arch repos:
++
++[core]
++Include = /etc/pacman.d/mirrorlist
++
++[extra]
++Include = /etc/pacman.d/mirrorlist
++
++[community]
++Include = /etc/pacman.d/mirrorlist
++
++[multilib]
++Include = /etc/pacman.d/mirrorlist
++
++# An example of a custom package repository.  See the pacman manpage for
++# tips on creating your own repositories.
++#[custom]
++#SigLevel = Optional TrustAll
++#Server = file:///home/custompkgs
+diff --git a/src/archbuild.in b/src/archbuild.in
+index 46fb043..373d719 100644
+--- a/src/archbuild.in
++++ b/src/archbuild.in
+@@ -13,6 +13,10 @@ if [[ "${cmd%%-*}" == 'multilib' ]]; then
+ 	repo="${cmd%-build}"
+ 	arch='x86_64'
+ 	base_packages+=(multilib-devel)
++elif [[ "${cmd##*-}" == 'crossbuild' ]]; then
++	tag="${cmd%-crossbuild}"
++	repo=${tag%-*}
++	arch=x_${tag##*-}
+ else
+ 	tag="${cmd%-build}"
+ 	repo=${tag%-*}
+@@ -20,6 +24,9 @@ else
+ fi
+ if [[ -f "@pkgdatadir@/setarch-aliases.d/${arch}" ]]; then
+ 	read -r set_arch < "@pkgdatadir@/setarch-aliases.d/${arch}"
++elif [[ "${arch}" == x_* ]]; then
++	set_arch=
++	export nosetarch=1
+ else
+ 	set_arch="${arch}"
+ fi
+@@ -75,7 +82,7 @@ if ${clean_first} || [[ ! -d "${chroots}/${repo}-${arch}" ]]; then
+ 
+ 	rm -rf --one-file-system "${chroots}/${repo}-${arch}"
+ 	(umask 0022; mkdir -p "${chroots}/${repo}-${arch}")
+-	setarch "${set_arch}" mkarchroot \
++	${CARCH:+setarch "$set_arch"} mkarchroot \
+ 		-C "${pacman_config}" \
+ 		-M "${makepkg_config}" \
+ 		"${chroots}/${repo}-${arch}/root" \
+-- 
+2.37.3
+

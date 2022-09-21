@@ -1,27 +1,30 @@
-From c267484aaa382e92363410c386d229701aa24b02 Mon Sep 17 00:00:00 2001
+From 024a31b056b8168bec8cd88f3448b165dbe514da Mon Sep 17 00:00:00 2001
 From: sfan5 <sfan5@live.de>
 Date: Wed, 7 Sep 2022 21:31:50 +0200
-Subject: [PATCH 4/6] config: add aarch64 build configs
+Subject: [PATCH 4/7] config: add aarch64 build configs
 
 ---
- Makefile                    |   5 ++
+ Makefile                    |   8 ++
  config/makepkg/aarch64.conf | 162 ++++++++++++++++++++++++++++++++++++
- config/pacman/extra.conf    |  11 +--
- config/pacman/staging.conf  |  17 ++--
- 4 files changed, 181 insertions(+), 14 deletions(-)
+ config/pacman/extra.conf    |  13 +--
+ config/pacman/staging.conf  |  19 +++--
+ 4 files changed, 188 insertions(+), 14 deletions(-)
  create mode 100644 config/makepkg/aarch64.conf
 
 diff --git a/Makefile b/Makefile
-index 91dd806..6a74e99 100644
+index 97e1d3f..43cd822 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -47,6 +47,11 @@ BASHCOMPLETION_LINKS = \
+@@ -48,6 +48,14 @@ BASHCOMPLETION_LINKS = \
  	communityco
  
  
-+ARCHBUILD_LINKS = extra-aarch64-build staging-aarch64-build
-+MAKEPKG_CONFIGS = config/makepkg/aarch64.conf
-+PACMAN_CONFIGS = config/pacman/extra.conf config/pacman/staging.conf
++ARCHBUILD_LINKS = \
++	extra-aarch64-build staging-aarch64-build
++MAKEPKG_CONFIGS = \
++	config/makepkg/aarch64.conf
++PACMAN_CONFIGS = \
++	config/pacman/extra.conf config/pacman/staging.conf
 +
 +
  all: binprogs completion man
@@ -196,10 +199,10 @@ index 0000000..8c698fa
 +#PACMAN_AUTH=()
 +# vim: set ft=sh ts=2 sw=2 et:
 diff --git a/config/pacman/extra.conf b/config/pacman/extra.conf
-index 768c96d..cf8b0aa 100644
+index 768c96d..f49324e 100644
 --- a/config/pacman/extra.conf
 +++ b/config/pacman/extra.conf
-@@ -70,8 +70,9 @@ LocalFileSigLevel = Optional
+@@ -70,8 +70,11 @@ LocalFileSigLevel = Optional
  # repo name header and Include lines. You can add preferred servers immediately
  # after the header, and they will be used before the default mirrors.
  
@@ -208,10 +211,12 @@ index 768c96d..cf8b0aa 100644
 +[ax]
 +SigLevel = PackageOptional
 +Server = http://b.pantsu.cloud/ax/
++
++# these are the normal ALARM repos:
  
  [core]
  Include = /etc/pacman.d/mirrorlist
-@@ -79,12 +80,12 @@ Include = /etc/pacman.d/mirrorlist
+@@ -79,12 +82,12 @@ Include = /etc/pacman.d/mirrorlist
  [extra]
  Include = /etc/pacman.d/mirrorlist
  
@@ -228,10 +233,10 @@ index 768c96d..cf8b0aa 100644
  # tips on creating your own repositories.
  #[custom]
 diff --git a/config/pacman/staging.conf b/config/pacman/staging.conf
-index 666d94d..b0cb41c 100644
+index 666d94d..c5dead7 100644
 --- a/config/pacman/staging.conf
 +++ b/config/pacman/staging.conf
-@@ -70,11 +70,13 @@ LocalFileSigLevel = Optional
+@@ -70,11 +70,15 @@ LocalFileSigLevel = Optional
  # repo name header and Include lines. You can add preferred servers immediately
  # after the header, and they will be used before the default mirrors.
  
@@ -246,10 +251,12 @@ index 666d94d..b0cb41c 100644
 +[ax]
 +SigLevel = PackageOptional
 +Server = http://b.pantsu.cloud/ax/
++
++# these are the normal ALARM repos:
  
  [core]
  Include = /etc/pacman.d/mirrorlist
-@@ -82,13 +84,10 @@ Include = /etc/pacman.d/mirrorlist
+@@ -82,13 +86,10 @@ Include = /etc/pacman.d/mirrorlist
  [extra]
  Include = /etc/pacman.d/mirrorlist
  
@@ -266,5 +273,5 @@ index 666d94d..b0cb41c 100644
  
  # An example of a custom package repository.  See the pacman manpage for
 -- 
-2.37.2
+2.37.3
 

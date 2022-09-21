@@ -1,7 +1,7 @@
-From e3adf06cf3d8d0d014103ed4605bb7cb178f3f6c Mon Sep 17 00:00:00 2001
+From edf7137b32e4101d328ce2c0a0e514efc88cc6d6 Mon Sep 17 00:00:00 2001
 From: sfan5 <sfan5@live.de>
 Date: Wed, 7 Sep 2022 22:36:46 +0200
-Subject: [PATCH 6/6] arch-nspawn: deal with differing mirror dir naming
+Subject: [PATCH 6/7] arch-nspawn: deal with differing mirror dir naming
  convention correctly
 
 ---
@@ -23,5 +23,5 @@ index 8c3ecbd..482b46b 100644
  for host_mirror in "${host_mirrors[@]}"; do
  	if [[ $host_mirror == *file://* ]]; then
 -- 
-2.37.2
+2.37.3
 

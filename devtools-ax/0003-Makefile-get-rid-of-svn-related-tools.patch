@@ -1,17 +1,17 @@
-From 5c0b37b8aab5054008b394d58ced5da53672cd13 Mon Sep 17 00:00:00 2001
+From db7054b68f295038dfcf2c211be353c19288e489 Mon Sep 17 00:00:00 2001
 From: sfan5 <sfan5@live.de>
 Date: Wed, 7 Sep 2022 21:01:26 +0200
-Subject: [PATCH 3/6] Makefile: get rid of svn-related tools
+Subject: [PATCH 3/7] Makefile: get rid of svn-related tools
 
 ---
  Makefile | 3 +++
  1 file changed, 3 insertions(+)
 
 diff --git a/Makefile b/Makefile
-index c106db5..91dd806 100644
+index 63736f7..97e1d3f 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -109,6 +109,9 @@ install: all
+@@ -110,6 +110,9 @@ install: all
  	for manfile in $(MANS); do \
  		install -Dm644 $$manfile -t $(DESTDIR)$(MANDIR)/man$${manfile##*.}; \
  	done;
@@ -22,5 +22,5 @@ index c106db5..91dd806 100644
  uninstall:
  	for f in $(notdir $(BINPROGS)); do rm -f $(DESTDIR)$(PREFIX)/bin/$$f; done
 -- 
-2.37.2
+2.37.3
 
