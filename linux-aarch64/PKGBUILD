@@ -7,9 +7,9 @@ buildarch=8
 # Note: currently uses old config due to https://github.com/archlinuxarm/PKGBUILDs/pull/1840#issuecomment-1153150152
 
 pkgbase=linux-aarch64
-_srcname=linux-5.19
+_srcname=linux-6.0.3
 _desc="AArch64 multi-platform"
-pkgver=5.19
+pkgver=${_srcname#*-}
 pkgrel=1
 arch=('aarch64')
 url="http://www.kernel.org/"
@@ -17,11 +17,11 @@ license=('GPL2')
 #makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-tools' 'vboot-utils' 'dtc')
 makedepends=('kmod' 'inetutils' 'bc' 'git' 'dtc' 'aarch64-linux-gnu-gcc')
 options=('!strip')
-source=("https://cdn.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
+source=("https://cdn.kernel.org/pub/linux/kernel/v6.x/${_srcname}.tar.xz"
 #source=("https://git.kernel.org/torvalds/t/${_srcname}.tar.gz"
         'config')
-sha1sums=('SKIP'
-         '09aec0a5dfc3fd2d59f04f86e7dfa8e4366afd0c')
+sha1sums=('137a9c056b847d0f78994d61fa97032eda6dc5ad'
+          '09aec0a5dfc3fd2d59f04f86e7dfa8e4366afd0c')
 
 _make='make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-'
 
