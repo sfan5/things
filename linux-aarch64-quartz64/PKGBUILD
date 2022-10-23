@@ -7,7 +7,7 @@ buildarch=8
 
 pkgbase=linux-aarch64-quartz64
 _srcname=linux
-_desc="AArch64 multi-platform (git, with Quartz64 specific patches)"
+_desc="AArch64 multi-platform (git)"
 pkgver=5.19.r10536.g65c770725350
 pkgrel=1
 arch=('aarch64')
@@ -15,7 +15,7 @@ url="http://www.kernel.org/"
 license=('GPL2')
 makedepends=('kmod' 'inetutils' 'bc' 'git' 'dtc' 'aarch64-linux-gnu-gcc')
 options=('!strip')
-source=('git+https://github.com/sfan5/linux#branch=quartz64'
+source=('git+https://github.com/torvalds/linux'
         'config')
 sha1sums=('SKIP'
          '63193dd464ceed3d83bbbcbe0ee8f1adfb7f2812')
