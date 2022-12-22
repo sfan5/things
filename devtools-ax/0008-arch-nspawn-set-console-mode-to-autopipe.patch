@@ -1,4 +1,4 @@
-From 7743bce40c7ad9161c1b4c43412aab0f9b39a400 Mon Sep 17 00:00:00 2001
+From 579a3139683a8751c2326d427b0d6f7a6eae356b Mon Sep 17 00:00:00 2001
 From: sfan5 <sfan5@live.de>
 Date: Wed, 21 Sep 2022 13:47:04 +0200
 Subject: [PATCH 8/8] arch-nspawn: set console mode to autopipe
@@ -24,5 +24,5 @@ index 482b46b..d9304bf 100644
  	"${mount_args[@]}" \
  	"$@"
 -- 
-2.37.3
+2.39.0
 

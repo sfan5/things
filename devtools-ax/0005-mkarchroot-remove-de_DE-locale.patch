@@ -1,4 +1,4 @@
-From 25a2e67cc6d43153c67b396401c67f0b6cde0343 Mon Sep 17 00:00:00 2001
+From ded6c8d106146836bc8c67163272787980fcd492 Mon Sep 17 00:00:00 2001
 From: sfan5 <sfan5@live.de>
 Date: Wed, 7 Sep 2022 22:30:43 +0200
 Subject: [PATCH 5/8] mkarchroot: remove de_DE locale
@@ -8,11 +8,11 @@ Subject: [PATCH 5/8] mkarchroot: remove de_DE locale
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/mkarchroot.in b/src/mkarchroot.in
-index d199bed..31d79ea 100644
+index 45ad19c..8747744 100644
 --- a/src/mkarchroot.in
 +++ b/src/mkarchroot.in
 @@ -84,7 +84,7 @@ done
- unshare --mount pacstrap -${umode}Mcd ${pac_conf:+-C "$pac_conf"} "$working_dir" \
+ unshare --mount pacstrap -${umode}Mc ${pac_conf:+-C "$pac_conf"} "$working_dir" \
  	"${cache_dirs[@]/#/--cachedir=}" "$@" || die 'Failed to install all packages'
  
 -printf '%s.UTF-8 UTF-8\n' C en_US de_DE > "$working_dir/etc/locale.gen"
@@ -21,5 +21,5 @@ index d199bed..31d79ea 100644
  echo "$CHROOT_VERSION" > "$working_dir/.arch-chroot"
  
 -- 
-2.37.3
+2.39.0
 

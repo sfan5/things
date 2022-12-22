@@ -1,4 +1,4 @@
-From 3329843334aeb661d88be4ff2ff865f68526eece Mon Sep 17 00:00:00 2001
+From 9af439f7e1e47486ef1261452f1237cd829b22e1 Mon Sep 17 00:00:00 2001
 From: "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>
 Date: Thu, 11 Aug 2022 18:18:46 +0200
 Subject: [PATCH 2/8] arch-nspawn: Enable --suppress-sync=yes
@@ -21,5 +21,5 @@ index 275cff7..8c3ecbd 100644
  	"${mount_args[@]}" \
  	"$@"
 -- 
-2.37.3
+2.39.0
 

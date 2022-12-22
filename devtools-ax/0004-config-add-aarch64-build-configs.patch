@@ -1,4 +1,4 @@
-From 024a31b056b8168bec8cd88f3448b165dbe514da Mon Sep 17 00:00:00 2001
+From 066f08ca9d8cd4a5207a12f3ef84ef773bbdba49 Mon Sep 17 00:00:00 2001
 From: sfan5 <sfan5@live.de>
 Date: Wed, 7 Sep 2022 21:31:50 +0200
 Subject: [PATCH 4/8] config: add aarch64 build configs
@@ -12,7 +12,7 @@ Subject: [PATCH 4/8] config: add aarch64 build configs
  create mode 100644 config/makepkg/aarch64.conf
 
 diff --git a/Makefile b/Makefile
-index 97e1d3f..43cd822 100644
+index 5f84c6a..ae2b987 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -48,6 +48,14 @@ BASHCOMPLETION_LINKS = \
@@ -273,5 +273,5 @@ index 666d94d..c5dead7 100644
  
  # An example of a custom package repository.  See the pacman manpage for
 -- 
-2.37.3
+2.39.0
 
