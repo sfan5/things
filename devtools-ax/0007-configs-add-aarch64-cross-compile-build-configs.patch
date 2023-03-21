@@ -1,4 +1,4 @@
-From a5b676d04f8403af2f2d91dbdd794541d5a71243 Mon Sep 17 00:00:00 2001
+From 6dbfc145b13b1b92ec1df08a61ace99a7a4aa59b Mon Sep 17 00:00:00 2001
 From: sfan5 <sfan5@live.de>
 Date: Wed, 21 Sep 2022 11:52:25 +0200
 Subject: [PATCH 7/8] configs: add aarch64 cross-compile build configs
@@ -15,7 +15,7 @@ Subject: [PATCH 7/8] configs: add aarch64 cross-compile build configs
  create mode 100644 config/pacman/staging-x_aarch64.conf
 
 diff --git a/Makefile b/Makefile
-index ae2b987..fbdab7b 100644
+index 7f5ee61..95644e7 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -49,11 +49,14 @@ BASHCOMPLETION_LINKS = \
@@ -412,7 +412,7 @@ index 0000000..898c3fa
 +#SigLevel = Optional TrustAll
 +#Server = file:///home/custompkgs
 diff --git a/src/archbuild.in b/src/archbuild.in
-index 46fb043..373d719 100644
+index 3d32198..dcdcab3 100644
 --- a/src/archbuild.in
 +++ b/src/archbuild.in
 @@ -13,6 +13,10 @@ if [[ "${cmd%%-*}" == 'multilib' ]]; then
@@ -436,7 +436,7 @@ index 46fb043..373d719 100644
  else
  	set_arch="${arch}"
  fi
-@@ -75,7 +82,7 @@ if ${clean_first} || [[ ! -d "${chroots}/${repo}-${arch}" ]]; then
+@@ -91,7 +98,7 @@ if ${clean_first} || [[ ! -d "${chroots}/${repo}-${arch}" ]]; then
  
  	rm -rf --one-file-system "${chroots}/${repo}-${arch}"
  	(umask 0022; mkdir -p "${chroots}/${repo}-${arch}")
@@ -446,5 +446,5 @@ index 46fb043..373d719 100644
  		-M "${makepkg_config}" \
  		"${chroots}/${repo}-${arch}/root" \
 -- 
-2.39.0
+2.39.2
 

@@ -1,6 +1,6 @@
 pkgname=devtools-ax
-_commit=a510331698bb13ca11ccd7db3f9beef75f87744c
-pkgver=20221012
+_commit=6dd7be3fd4d3104101f5a8bbf0f12fcfe8124fd7
+pkgver=20230307
 pkgrel=1
 pkgdesc='Tools for Arch Linux package maintainers (customized)'
 arch=('any')
@@ -23,14 +23,14 @@ source=(
   0008-arch-nspawn-set-console-mode-to-autopipe.patch
 )
 sha256sums=('SKIP'
-            'f0ed3739d75000d0ae58431da9f41a7df1d1a77e503fc77ecf3a19fc6e77bca1'
-            '9016990e4e41bc4b8f45efe90605e4e8a4765982f31252172ee2357b449adb69'
-            '83acd57425bb01c123f3df37eb8e3416dc1a1bd4dcaf4dfdac7661870cbf04a9'
-            '56bb4e723399731a48eab64ba4bdfb88b7d4261a6fe91381d5d88c5389ca5784'
-            '75c058ac3f3a50639e04f4fbc579fd83bb0919ae8f005c576855237b6a8fb08e'
-            '7e8c60f2372f769e50ec14110df27da03b935b63843d27c28c7ac8425aaed358'
-            'ee1e2949470fa38d6f4d3865bd6f506bb82d11ee6b671bcac9839565a19e035c'
-            '7a7af787fd56d4eb89642ffc5a57251f76ad66c91cd6fc7d953bb4a34feb057d')
+            'cba36e94d8f1e624fed83c5d047b143d8f4058c1740f3cc218b74fea42f9a55c'
+            '0090045176da7d7f22153bb59cb2abf3572493b4ed77e922fc18ffffdb1d9958'
+            '9b97fc08e5f318d50a4122e6131cd0de9217877e12c41a9e25f93042fbaa065c'
+            '803f5bd2fb540f4e2e36d6f01bafc2461063025168b7e448a6cd9e9ad397f6f8'
+            '903e39164e9bc004da9eafd79c51025a7d5c88a8c7735a2f53ca35fce1b30300'
+            '5344924d346bb149057708363a5d927256895260621e3ff0bc957eafb442151f'
+            'bf818ef03759304d7ec8a7db1134fdfddba07d232c07c604acf43c53a39fba28'
+            '01457b9ad91b020c1462a8de99737101c3a6f8e496fcce048c8d3c5f1f54e4c5')
 
 prepare() {
   cd devtools
