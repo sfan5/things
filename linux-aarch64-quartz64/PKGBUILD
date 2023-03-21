@@ -32,7 +32,6 @@ prepare() {
   cd $_srcname
 
   echo "Setting version..."
-  scripts/setlocalversion --save-scmversion
   echo "-$pkgrel" > localversion.10-pkgrel
   echo "${pkgbase#linux}" > localversion.20-pkgname
 
@@ -42,9 +41,11 @@ prepare() {
 build() {
   cd ${_srcname}
 
+  ${_make} prepare
+
   # get kernel version
   export LOCALVERSION= # suppress + at end of version string
-  ${_make} prepare
+  ${_make} include/config/kernel.release
   ${_make} -s kernelrelease > version
 
   # build!
