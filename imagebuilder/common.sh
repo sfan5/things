@@ -56,6 +56,12 @@ relaunch_in_vm() {
 	if [[ "$(uname -m)" == ${_vm_expect_arch} ]]; then
 		return 2
 	fi
+	printf '%s\n' \
+		========================== \
+		"You're using the automatic QEMU part of the imagebuilder, this is totally" \
+		"experimental and you should really just get an aarch64 machine to run this." \
+		==========================
+
 	local rootfs="$1"
 	[ -s "$1" ] || die "Need a previous rootfs build to bootstrap"
 	check_tools mkfs.ext4 bsdtar qemu-system-aarch64

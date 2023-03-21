@@ -72,6 +72,9 @@ msg "Extracting"
 bsdtar -xpf "$source" -C "$mntdir"
 
 mkdir -p "$mntdir/boot/extlinux"
+if [ ! -f "$mntdir/boot/dtbs/rockchip/rk3566-quartz64-b.dtb" ]; then
+	die "Installed kernel is missing the right DTB"
+fi
 install -T -m 644 /dev/stdin "$mntdir/boot/extlinux/extlinux.conf" <<"BOOTMENU"
 default l0
 menu title Quartz64 Boot Menu
@@ -84,9 +87,6 @@ linux /Image
 fdt /dtbs/rockchip/rk3566-quartz64-b.dtb
 append initrd=/initramfs-linux.img earlycon=uart8250,mmio32,0xfe660000 console=ttyS2,1500000n8 root=LABEL=rootfs rw rootwait
 BOOTMENU
-
-# TODO: should install the right kernel instead of this
-cp bins/rk3566-quartz64-b.dtb "$mntdir/boot/dtbs/rockchip/"
 
 sync "$mntdir/"
 cleanup_mount

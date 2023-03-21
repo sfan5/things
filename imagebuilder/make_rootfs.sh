@@ -13,7 +13,8 @@ relaunch_in_vm "$target" && :
 r=$?
 
 if [ $r -eq 3 ]; then
-	pacman-key --init && pacman-key --populate
+	pacman-key --init && pacman-key --populate archlinuxarm
+	pacman -Sy
 	pacman -S --noconfirm --needed arch-install-scripts
 
 	# put temporary files on rootfs, that'll be faster
@@ -124,7 +125,7 @@ rm /var/log/pacman.log /etc/machine-id
 
 cleanup_mounts
 
-msg "Creating archive"
+msg "Archiving"
 rm -f "$target"
 bsdtar -cz --numeric-owner -f "$target" -C "$tmpdir" .
 
