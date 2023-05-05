@@ -7,7 +7,7 @@ buildarch=8
 # Note: currently uses old config due to https://github.com/archlinuxarm/PKGBUILDs/pull/1840#issuecomment-1153150152
 
 pkgbase=linux-aarch64
-_srcname=linux-6.2.9
+_srcname=linux-6.3.1
 _desc="AArch64 multi-platform"
 pkgver=${_srcname#*-}
 pkgrel=1
@@ -19,7 +19,7 @@ makedepends=('kmod' 'inetutils' 'bc' 'git' 'dtc' 'aarch64-linux-gnu-gcc')
 options=('!strip')
 source=("https://cdn.kernel.org/pub/linux/kernel/v6.x/${_srcname}.tar.xz"
         'config')
-sha1sums=('01fead9182c1cf316c45a82ee8390ae3e092657b'
+sha1sums=('9964c71eebe06b31ff917f0261e6a8a7309894a3'
           '09aec0a5dfc3fd2d59f04f86e7dfa8e4366afd0c')
 
 _make='make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-'
@@ -28,7 +28,6 @@ prepare() {
   cd $_srcname
 
   echo "Setting version..."
-  scripts/setlocalversion --save-scmversion
   echo "-$pkgrel" > localversion.10-pkgrel
   echo "${pkgbase#linux}" > localversion.20-pkgname
 
@@ -38,8 +37,10 @@ prepare() {
 build() {
   cd ${_srcname}
 
-  # get kernel version
   ${_make} prepare
+
+  # get kernel version
+  ${_make} include/config/kernel.release
   ${_make} -s kernelrelease > version
 
   # build!
