@@ -7,7 +7,7 @@ buildarch=8
 # Note: currently uses old config due to https://github.com/archlinuxarm/PKGBUILDs/pull/1840#issuecomment-1153150152
 
 pkgbase=linux-aarch64
-_srcname=linux-6.3.8
+_srcname=linux-6.4.3
 _desc="AArch64 multi-platform"
 pkgver=${_srcname#*-}
 pkgrel=1
@@ -19,10 +19,15 @@ makedepends=('kmod' 'inetutils' 'bc' 'git' 'dtc' 'aarch64-linux-gnu-gcc')
 options=('!strip')
 source=("https://cdn.kernel.org/pub/linux/kernel/v6.x/${_srcname}.tar.xz"
         'config')
-sha1sums=('d4e3079c978ff3f29e31a2a2a24a3e42818c91f0'
+sha1sums=('a0bbf333fd92b6d0b23e08269f838a797e5682d6'
           '09aec0a5dfc3fd2d59f04f86e7dfa8e4366afd0c')
 
-_make='make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-'
+_make() {
+  make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- "$@"
+}
+_strip() {
+  aarch64-linux-gnu-strip "$@"
+}
 
 prepare() {
   cd $_srcname
@@ -31,55 +36,67 @@ prepare() {
   echo "-$pkgrel" > localversion.10-pkgrel
   echo "${pkgbase#linux}" > localversion.20-pkgname
 
-  cat "${srcdir}/config" > ./.config
+  echo "Setting config..."
+  cp "${srcdir}/config" .config
+  _make olddefconfig
+  diff -u ../config .config || :
 }
 
 build() {
-  cd ${_srcname}
+  cd $_srcname
 
-  ${_make} prepare
+  _make prepare
 
   # get kernel version
-  ${_make} include/config/kernel.release
-  ${_make} -s kernelrelease > version
+  _make include/config/kernel.release
+  _make -s kernelrelease > version
 
   # build!
   unset LDFLAGS
-  ${_make} ${MAKEFLAGS} Image Image.gz modules
+  _make ${MAKEFLAGS} Image Image.gz modules
   # Generate device tree blobs with symbols to support applying device tree overlays in U-Boot
-  ${_make} ${MAKEFLAGS} DTC_FLAGS="-@" dtbs
+  _make ${MAKEFLAGS} DTC_FLAGS="-@" dtbs
 }
 
 _package() {
   pkgdesc="The Linux Kernel and modules - ${_desc}"
-  depends=('coreutils' 'linux-firmware' 'kmod' 'mkinitcpio>=0.7')
-  optdepends=('crda: to set the correct wireless channels of your country')
-  provides=("linux=${pkgver}" WIREGUARD-MODULE KSMBD-MODULE)
+  depends=(
+    coreutils
+    linux-firmware
+    kmod
+  )
+  optdepends=(
+    'wireless-regdb: to set the correct wireless channels of your country'
+  )
+  provides=(
+    "linux=${pkgver}"
+    KSMBD-MODULE
+    WIREGUARD-MODULE
+  )
   replaces=('linux-armv8')
   conflicts=('linux')
   install=${pkgname}.install
 
   cd $_srcname
-  local kernver="$(<version)"
-  local modulesdir="$pkgdir/usr/lib/modules/$kernver"
+  local modulesdir="$pkgdir/usr/lib/modules/$(<version)"
 
   echo "Installing boot image and dtbs..."
   install -Dm644 arch/arm64/boot/Image{,.gz} -t "${pkgdir}/boot"
-  ${_make} INSTALL_DTBS_PATH="${pkgdir}/boot/dtbs" dtbs_install
+  _make INSTALL_DTBS_PATH="${pkgdir}/boot/dtbs" dtbs_install
 
   # Used by mkinitcpio to automatically handle the initramfs
   install -Dm644 arch/arm64/boot/Image "$modulesdir/vmlinuz"
   echo linux | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
   echo "Installing modules..."
-  ${_make} INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
+  _make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
 
   # remove build and source links
   rm "$modulesdir"/{source,build}
 }
 
 _package-headers() {
-  pkgdesc="Header files and scripts for building modules for linux kernel - ${_desc}"
+  pkgdesc="Headers and scripts for building modules for the Linux kernel - ${_desc}"
   provides=("linux-headers=${pkgver}")
   conflicts=('linux-headers')
 
@@ -140,7 +157,7 @@ _package-headers() {
   echo "Stripping build tools..."
   local file
   while read -rd '' file; do
-    case "$(file -bi "$file")" in
+    case "$(file -Sib "$file")" in
       application/x-sharedlib\;*)      # Libraries (.so)
         strip -v $STRIP_SHARED "$file" ;;
       application/x-archive\;*)        # Libraries (.a)
@@ -152,14 +169,21 @@ _package-headers() {
     esac
   done < <(find "$builddir" -type f -perm -u+x ! -name vmlinux -print0)
 
+  echo "Stripping vmlinux..."
+  _strip -v $STRIP_STATIC "$builddir/vmlinux"
+
   echo "Adding symlink..."
   mkdir -p "$pkgdir/usr/src"
   ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
 }
 
-pkgname=("${pkgbase}")
-for _p in ${pkgname[@]}; do
-  eval "package_${_p}() {
-    _package${_p#${pkgbase}}
+pkgname=(
+  "$pkgbase"
+  "$pkgbase-headers"
+)
+for _p in "${pkgname[@]}"; do
+  eval "package_$_p() {
+    $(declare -f "_package${_p#$pkgbase}")
+    _package${_p#$pkgbase}
   }"
 done
