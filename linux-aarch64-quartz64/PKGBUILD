@@ -18,7 +18,7 @@ options=('!strip')
 source=('git+https://github.com/torvalds/linux'
         'config')
 sha1sums=('SKIP'
-         '63193dd464ceed3d83bbbcbe0ee8f1adfb7f2812')
+          'b195f64f96d142f581217d6da35fcb2a51e4be82')
 
 _make() {
   make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- "$@"
