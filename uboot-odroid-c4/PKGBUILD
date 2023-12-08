@@ -8,7 +8,7 @@ noautobuild=1
 
 pkgname=uboot-odroid-c4
 pkgver=2015.01
-pkgrel=2
+pkgrel=3
 pkgdesc="U-Boot for ODROID-C4"
 arch=('aarch64')
 url="https://github.com/hardkernel/u-boot"
@@ -16,7 +16,7 @@ license=('GPL')
 install=$pkgname.install
 makedepends=('bc' 'lib32-gcc-libs' 'lib32-glibc' 'lib32-zlib')
 backup=('boot/boot.ini')
-_commit=29f787efbf6f260db4dcb33b8124363d978f4226
+_commit=154ddfc826e72c902232169b676b2a4e59c75171 # odroidg12-v2015.01 branch
 _toolchain1=gcc-linaro-aarch64-none-elf-4.8-2013.11_linux
 _toolchain2=gcc-linaro-arm-none-eabi-4.8-2014.04_linux
 source=("https://github.com/hardkernel/u-boot/archive/${_commit}.tar.gz"
@@ -26,7 +26,7 @@ source=("https://github.com/hardkernel/u-boot/archive/${_commit}.tar.gz"
         '0001-sd_fusing-tweaks.diff'
         '0002-arch-linux-arm-modifications.diff'
         '0003-fix-include-issues.diff')
-sha1sums=('733dd50e7e747908dd3c002e800b32535185e2fd'
+sha1sums=('eb2fc9aa4890cbea5357ab7acf02075f4e205b84'
           '2b3b36d10b72f018c476f09457d0d81fd4baaaeb'
           '8069f484cfd5a7ea02d5bb74b56ae6c99e478d13'
           'c2010dcfceb32a636768cc8cf34357e6a9578f52'
