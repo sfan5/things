@@ -40,16 +40,13 @@ prepare() {
   cp "${srcdir}/config" .config
   _make olddefconfig
   diff -u ../config .config || :
+
+  make -s kernelrelease > version
+  echo "Prepared $pkgbase version $(<version)"
 }
 
 build() {
   cd $_srcname
-
-  _make prepare
-
-  # get kernel version
-  _make include/config/kernel.release
-  _make -s kernelrelease > version
 
   # build!
   unset LDFLAGS
@@ -63,6 +60,7 @@ _package() {
   depends=(
     coreutils
     linux-firmware
+    initramfs
     kmod
   )
   optdepends=(
@@ -91,8 +89,8 @@ _package() {
   echo "Installing modules..."
   _make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
 
-  # remove build and source links
-  rm "$modulesdir"/{source,build}
+  # remove build link
+  rm "$modulesdir"/build
 }
 
 _package-headers() {
