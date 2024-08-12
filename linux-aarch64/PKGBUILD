@@ -7,7 +7,7 @@ buildarch=8
 # Note: currently uses old config due to https://github.com/archlinuxarm/PKGBUILDs/pull/1840#issuecomment-1153150152
 
 pkgbase=linux-aarch64
-_srcname=linux-6.10.1
+_srcname=linux-6.10.4
 _desc="AArch64 multi-platform"
 pkgver=${_srcname#*-}
 pkgrel=1
@@ -19,7 +19,7 @@ makedepends=('kmod' 'inetutils' 'bc' 'git' 'dtc' 'aarch64-linux-gnu-gcc')
 options=('!strip')
 source=("https://cdn.kernel.org/pub/linux/kernel/v6.x/${_srcname}.tar.xz"
         'config')
-sha1sums=('8a4d7ab95aa5eccd413118e5eabe7dacc9067221'
+sha1sums=('b0a7bdfc9b1d2398a011daab1091f88c18df1864'
           '09aec0a5dfc3fd2d59f04f86e7dfa8e4366afd0c')
 
 _make() {
