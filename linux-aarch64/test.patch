@@ -1,0 +1,12 @@
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index f3a1b179aae..b75749b95b3 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -7273,6 +7273,7 @@ static int stmmac_hw_init(struct stmmac_priv *priv)
+ 	 * has to be disable and this can be done by passing the
+ 	 * riwt_off field from the platform.
+ 	 */
++	priv->plat->riwt_off = 1;
+ 	if (((priv->synopsys_id >= DWMAC_CORE_3_50) ||
+ 	    (priv->plat->has_xgmac)) && (!priv->plat->riwt_off)) {
+ 		priv->use_riwt = 1;
