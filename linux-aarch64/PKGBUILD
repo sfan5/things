@@ -10,7 +10,7 @@ pkgbase=linux-aarch64
 _srcname=linux-6.10.5
 _desc="AArch64 multi-platform"
 pkgver=${_srcname#*-}
-pkgrel=1
+pkgrel=2
 arch=('aarch64')
 url="http://www.kernel.org/"
 license=('GPL2')
@@ -18,10 +18,9 @@ license=('GPL2')
 makedepends=('kmod' 'inetutils' 'bc' 'git' 'dtc' 'aarch64-linux-gnu-gcc')
 options=('!strip')
 source=("https://cdn.kernel.org/pub/linux/kernel/v6.x/${_srcname}.tar.xz"
-        'config' 'test.patch')
+        'config')
 sha1sums=('72ae72f5b2ab41c3d1fa6eb0103bf3717373fbf3'
-          '09aec0a5dfc3fd2d59f04f86e7dfa8e4366afd0c'
-          '6ef14b4f5cbac680caef2941a59c7553d4fb351a')
+          '09aec0a5dfc3fd2d59f04f86e7dfa8e4366afd0c')
 
 _make() {
   make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- "$@"
@@ -32,8 +31,6 @@ _strip() {
 
 prepare() {
   cd $_srcname
-
-  patch -p1 --verbose <"${srcdir}/test.patch"
 
   echo "Setting version..."
   echo "-$pkgrel" > localversion.10-pkgrel
