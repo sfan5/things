@@ -1,56 +1,44 @@
-# U-Boot: Pine64 Quartz64 (both models)
+# U-Boot: Pine64 Quartz64 (model b)
 # Maintainer: sfan5 <sfan5@live.de>
 
-# Note: must be built on x86
-
 buildarch=8
-noautobuild=1
 
 pkgname=uboot-quartz64
-pkgver=2017.09
+pkgver=2024.07
 pkgrel=1
-pkgdesc="U-Boot for Quartz64"
+pkgdesc="U-Boot for Quartz64 (B)"
 arch=('aarch64')
-url="https://gitlab.com/pgwipeout/u-boot-rockchip"
+url="https://source.denx.de/u-boot/u-boot"
 license=('GPL')
 install=$pkgname.install
-makedepends=('bc' 'dtc' 'git' 'python')
-_commit1=6336d2324985831ed766031f91d410d0e587dbc8 # quartz64 branch
-_commit2=ac64b3e9e57a7712187dc1bb6e83841232214ac8 # rkbin branch
-_toolchain=gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu
-source=("git+https://gitlab.com/pgwipeout/u-boot-rockchip.git/#commit=${_commit1}"
-        "https://gitlab.com/pgwipeout/quartz64_ci/-/raw/main/${_toolchain}.tar.xz"
-        "https://github.com/JeffyCN/rockchip_mirrors/archive/${_commit2}.tar.gz"
-        "git+https://github.com/eliben/pyelftools/#tag=v0.28"
+makedepends=('bc' 'dtc' 'git' 'python' 'python-pyelftools')
+_commit1=a2a0b89b6c8c612dca5ed9ed8a68db8a07f68bc0
+source=("git+https://source.denx.de/u-boot/u-boot#tag=v${pkgver}"
+        "https://github.com/rockchip-linux/rkbin/archive/${_commit1}.tar.gz"
         'flash_uboot.sh')
-sha1sums=('SKIP'
-          '63d10832a8f21de68bd37a8e7f59be99d225258e'
-          'ece5e546fa9a795da9a5b4e80b1b2c59c866e4ed'
-          'SKIP'
-          'e2e95a0097aa62d45044bef47db6ea308864f370')
-
-prepare() {
-  ln -snf rockchip_mirrors-${_commit2} rkbin
-}
+sha256sums=('SKIP'
+            '9df375316869daadbf874410f4097591c32cc2dca5a30fd328ea7a1cd8f8b6a8'
+            'ae9bb5c6765e3e8b9b1f4eafb095f39adf5d0915f4e179a9d48d808cd7bbdee0')
 
 build() {
-  cd u-boot-rockchip
+  cd u-boot
 
   unset CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
-  export PATH="${srcdir}/${_toolchain}/bin:$PATH"
-  export PYTHONPATH="${srcdir}/pyelftools"
+  export ROCKCHIP_TL="../rkbin/bin/rk35/rk3566_ddr_1056MHz_v1.21.bin"
+  export BL31="../rkbin/bin/rk35/rk3568_bl31_ultra_v2.17.elf"
 
-  make rk3566-quartz64_defconfig
+  make quartz64-b-rk3566_defconfig
   printf '%s\n' CONFIG_ENV_IS_NOWHERE=y 'CONFIG_IDENT_STRING=" Arch Linux ARM"' >>.config
 
+  make
   CROSS_COMPILE=aarch64-none-linux-gnu- ./make.sh
   ./tools/resource_tool --pack arch/arm/dts/rk3566-quartz64.dtb
 }
 
 package() {
-  cd u-boot-rockchip
+  cd u-boot
 
   install -d "${pkgdir}"/boot
-  install -t "${pkgdir}"/boot "${srcdir}/flash_uboot.sh"
-  install -t "${pkgdir}"/boot -m 0644 idblock.bin uboot.img
+  install -t "${pkgdir}"/boot -m 0755 "${srcdir}/flash_uboot.sh"
+  install -m 0644 -T u-boot-rockchip.bin "${pkgdir}"/boot/uboot.img
 }
