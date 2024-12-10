@@ -5,7 +5,7 @@ buildarch=8
 
 # Note: must be built on x86
 
-pkgbase=linux-aarch64-quartz64
+pkgbase=linux-aarch64-git
 _srcname=linux
 _desc="AArch64 multi-platform (git)"
 pkgver=5.19.r10536.g65c770725350
@@ -18,7 +18,7 @@ options=('!strip')
 source=('git+https://github.com/torvalds/linux'
         'config')
 sha1sums=('SKIP'
-          '2264e07135f896eddc4f2fa293ba17d81f29f014')
+          'dc4540426cfa7848a9f0060c453c92f1053957ab')
 
 _make() {
   make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- "$@"
