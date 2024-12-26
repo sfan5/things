@@ -15,7 +15,7 @@ arch=('aarch64')
 url="http://www.kernel.org/"
 license=('GPL2')
 #makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-tools' 'vboot-utils' 'dtc')
-makedepends=('kmod' 'inetutils' 'bc' 'git' 'dtc' 'aarch64-linux-gnu-gcc')
+makedepends=('kmod' 'inetutils' 'bc' 'git' 'dtc' 'python' 'aarch64-linux-gnu-gcc')
 options=('!strip')
 source=("https://cdn.kernel.org/pub/linux/kernel/v6.x/${_srcname}.tar.xz"
         'config')
