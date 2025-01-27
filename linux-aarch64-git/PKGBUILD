@@ -13,7 +13,7 @@ pkgrel=1
 arch=('aarch64')
 url="http://www.kernel.org/"
 license=('GPL2')
-makedepends=('kmod' 'inetutils' 'bc' 'git' 'dtc' 'aarch64-linux-gnu-gcc')
+makedepends=('kmod' 'inetutils' 'bc' 'git' 'dtc' 'python' 'aarch64-linux-gnu-gcc')
 options=('!strip')
 source=('git+https://github.com/torvalds/linux'
         'config')
